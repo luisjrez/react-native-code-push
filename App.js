@@ -15,6 +15,7 @@ import {
   Text,
   StatusBar,
 } from 'react-native';
+import codePush from 'react-native-code-push'
 
 import {
   Header,
@@ -25,6 +26,11 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 const App: () => React$Node = () => {
+  useEffect(() => {
+    codePush.sync({
+      installMode: codePush.InstallMode.IMMEDIATE
+    })
+  }, [])
   return (
     <>
       <StatusBar barStyle="dark-content" />
