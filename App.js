@@ -1,119 +1,168 @@
+import React, { Component } from 'react'
+import {
+  ActivityIndicator,
+  View,
+  Text
+} from 'react-native'
+import CodePush from 'react-native-code-push'
+
+class Application extends Component {
+  constructor () {
+    super()
+    this.state = {
+      restartAllowed: true,
+      isUpToDate: true,
+      onLoad: true,
+      isUpdating: false
+    }
+  }
+
+  componentDidMount () {
+    CodePush.checkForUpdate()
+      .then((update) => {
+        if (!update) {
+          console.log('The app is up to date!')
+          this.setState({
+            isUpToDate: true,
+            onLoad: false
+          })
+        } else {
+          console.log('An update is available! Should we download it?')
+          this.setState({
+            isUpToDate: false,
+            onLoad: false
+          }, this.sync)
+        }
+      })
+      .catch(() => {
+        this.setState({
+          onLoad: false
+        })
+      })
+  }
+
+  codePushStatusDidChange (syncStatus) {
+    switch (syncStatus) {
+      case CodePush.SyncStatus.CHECKING_FOR_UPDATE:
+        this.setState({ syncMessage: 'Checking for update.' })
+        break
+      case CodePush.SyncStatus.DOWNLOADING_PACKAGE:
+        this.setState({ syncMessage: 'Downloading package.' })
+        break
+      case CodePush.SyncStatus.AWAITING_USER_ACTION:
+        this.setState({ syncMessage: 'Awaiting user action.' })
+        break
+      case CodePush.SyncStatus.INSTALLING_UPDATE:
+        this.setState({ syncMessage: 'Installing update.' })
+        break
+      case CodePush.SyncStatus.UP_TO_DATE:
+        this.setState({ syncMessage: 'App up to date.', progress: false })
+        break
+      case CodePush.SyncStatus.UPDATE_IGNORED:
+        this.setState({ syncMessage: 'Update cancelled by user.', progress: false, isUpdating: false })
+        break
+      case CodePush.SyncStatus.UPDATE_INSTALLED:
+        this.setState({ syncMessage: 'Update installed and will be applied on restart.', progress: false, isUpdating: false })
+        CodePush.notifyAppReady()
+        break
+      case CodePush.SyncStatus.UNKNOWN_ERROR:
+        this.setState({ syncMessage: 'An unknown error occurred.', progress: false, isUpdating: false })
+        break
+    }
+  }
+
+  codePushDownloadDidProgress (progress) {
+    this.setState({ progress })
+  }
+
+  // toggleAllowRestart () {
+  //   this.state.restartAllowed
+  //     ? CodePush.disallowRestart()
+  //     : CodePush.allowRestart()
+
+  //   this.setState({ restartAllowed: !this.state.restartAllowed })
+  // }
+
+  // getUpdateMetadata () {
+  //   CodePush.getUpdateMetadata(CodePush.UpdateState.RUNNING)
+  //     .then((metadata: LocalPackage) => {
+  //       this.setState({ syncMessage: metadata ? JSON.stringify(metadata) : 'Running binary version', progress: false })
+  //     }, (error: any) => {
+  //       this.setState({ syncMessage: 'Error: ' + error, progress: false })
+  //     })
+  // }
+
+  /** Update is downloaded silently, and applied on restart (recommended) */
+  sync () {
+    this.setState({
+      isUpdating: true
+    }, () => {
+      CodePush.sync(
+        { installMode: CodePush.InstallMode.ON_NEXT_RESUME },
+        this.codePushStatusDidChange.bind(this),
+        this.codePushDownloadDidProgress.bind(this)
+      )
+    })
+  }
+
+  render () {
+    const {
+      onLoad,
+      isUpdating,
+      isUpToDate
+    } = this.state
+
+    if (onLoad) {
+      return (
+        <View
+          style={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            flex: 1,
+            backgroundColor: 'orange'
+          }}
+        >
+          <ActivityIndicator color='#FFF' size='large' />
+        </View>
+      )
+    }
+
+    return (
+      <View
+        style={{
+          alignItems: 'center',
+          justifyContent: 'center',
+          flex: 1,
+          backgroundColor: 'orange'
+        }}
+      >
+        {
+          (!isUpdating && isUpToDate) ? (
+            <>
+              <Text>Hello from Code Push Example!</Text>
+              <Text>THE APP IS UP TO DATE</Text>
+            </>
+          )
+            : (
+              <>
+                <Text>INSTALLING NEW UPDATE....</Text>
+                <Text style={{ marginTop: 30, textAlign: 'center' }}>{this.state.progress.receivedBytes} of {this.state.progress.totalBytes} bytes received</Text>
+              </>
+            )
+        }
+      </View>
+    )
+  }
+}
+
 /**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
+ * Configured with a MANUAL check frequency for easy testing. For production apps, it is recommended to configure a
+ * different check frequency, such as ON_APP_START, for a 'hands-off' approach where CodePush.sync() does not
+ * need to be explicitly called. All options of CodePush.sync() are also available in this decorator.
  */
 
-import React, { useEffect } from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-} from 'react-native';
-import codePush from 'react-native-code-push'
+const codePushOptions = { checkFrequency: CodePush.CheckFrequency.ON_APP_START }
 
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+const App = CodePush(codePushOptions)(Application)
 
-const App: () => React$Node = () => {
-  useEffect(() => {
-    codePush.sync({
-      installMode: codePush.InstallMode.IMMEDIATE
-    })
-  }, [])
-  return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          <Header />
-          {global.HermesInternal == null ? null : (
-            <View style={styles.engine}>
-              <Text style={styles.footer}>Engine: Hermes</Text>
-            </View>
-          )}
-          <View style={styles.body}>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>New Step One</Text>
-              <Text style={styles.sectionDescription}>
-                This text was changed via codepush!!!
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>See Your Changes</Text>
-              <Text style={styles.sectionDescription}>
-                <ReloadInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Debug</Text>
-              <Text style={styles.sectionDescription}>
-                <DebugInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Learn More</Text>
-              <Text style={styles.sectionDescription}>
-                Read the docs to discover what to do next:
-              </Text>
-            </View>
-            <LearnMoreLinks />
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </>
-  );
-};
-
-const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
-  },
-  engine: {
-    position: 'absolute',
-    right: 0,
-  },
-  body: {
-    backgroundColor: Colors.white,
-  },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
-  },
-});
-
-export default App;
+export default App
