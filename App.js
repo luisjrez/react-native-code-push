@@ -136,23 +136,9 @@ class Application extends Component {
           backgroundColor: 'orange'
         }}
       >
-        {
-          (!isUpdating && isUpToDate) ? (
-            <>
-              <Text>Hello from Code Push Example!</Text>
-              <Text>THE APP IS UP TO DATE</Text>
-              <Text>ADD NEW TEXT VIA CODE PUSH</Text>
-              <Text>THIS WAS SHOWING VIA CODEPUSH</Text>
-            </>
-          )
-            : (
-              <>
-                <Text>INSTALLING NEW UPDATE....</Text>
-                <Text>{JSON.stringify('PROGRESS: ', this.state.progress)}</Text>
-                {/* <Text style={{ marginTop: 30, textAlign: 'center' }}>{this.state.progress.receivedBytes} of {this.state.progress.totalBytes} bytes received</Text> */}
-              </>
-            )
-        }
+        <Text>Hello from Code Push Example!</Text>
+        <Text>{isUpdating ? 'INSTALLING UPDATE' : 'THE APP IS UP TO DATE'}</Text>
+        <Text>{JSON.stringify(`PROGRESS: ${this.state}`, null, 2)}</Text>
       </View>
     )
   }
