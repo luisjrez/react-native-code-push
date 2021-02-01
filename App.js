@@ -148,7 +148,8 @@ class Application extends Component {
             : (
               <>
                 <Text>INSTALLING NEW UPDATE....</Text>
-                <Text style={{ marginTop: 30, textAlign: 'center' }}>{this.state.progress.receivedBytes} of {this.state.progress.totalBytes} bytes received</Text>
+                <Text>{JSON.stringify('PROGRESS: ', this.state.progress)}</Text>
+                {/* <Text style={{ marginTop: 30, textAlign: 'center' }}>{this.state.progress.receivedBytes} of {this.state.progress.totalBytes} bytes received</Text> */}
               </>
             )
         }
