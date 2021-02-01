@@ -141,6 +141,8 @@ class Application extends Component {
             <>
               <Text>Hello from Code Push Example!</Text>
               <Text>THE APP IS UP TO DATE</Text>
+              <Text>ADD NEW TEXT VIA CODE PUSH</Text>
+              <Text>THIS WAS SHOWING VIA CODEPUSH</Text>
             </>
           )
             : (
