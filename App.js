@@ -53,7 +53,7 @@ class Application extends Component {
         this.setState({ syncMessage: 'Awaiting user action.' })
         break
       case CodePush.SyncStatus.INSTALLING_UPDATE:
-        this.setState({ syncMessage: 'Installing update.' })
+        this.setState({ syncMessage: 'Installing update.', progress: false, isUpdating: false })
         break
       case CodePush.SyncStatus.UP_TO_DATE:
         this.setState({ syncMessage: 'App up to date.', progress: false })
@@ -136,7 +136,6 @@ class Application extends Component {
           backgroundColor: 'steelblue'
         }}
       >
-        <Text style={{ color: '#FFF', fontWeight: 'bold' }}>Hello from Code Push Example!</Text>
         <Text style={{ color: '#FFF', fontWeight: 'bold' }}>{isUpdating ? 'INSTALLING UPDATE' : 'THE APP IS UP TO DATE'}</Text>
         <Text style={{ color: '#FFF', fontWeight: 'bold' }}>{JSON.stringify(this.state, null, 2)}</Text>
       </View>
