@@ -133,7 +133,7 @@ class Application extends Component {
           alignItems: 'center',
           justifyContent: 'center',
           flex: 1,
-          backgroundColor: 'orange'
+          backgroundColor: 'steelblue'
         }}
       >
         <Text style={{ color: '#FFF', fontWeight: 'bold' }}>Hello from Code Push Example!</Text>
