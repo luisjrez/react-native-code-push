@@ -98,7 +98,7 @@ class Application extends Component {
       isUpdating: true
     }, () => {
       CodePush.sync(
-        { installMode: CodePush.InstallMode.ON_NEXT_RESUME },
+        { installMode: CodePush.InstallMode.IMMEDIATE },
         this.codePushStatusDidChange.bind(this),
         this.codePushDownloadDidProgress.bind(this)
       )
