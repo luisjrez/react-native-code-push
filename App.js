@@ -119,7 +119,7 @@ class Application extends Component {
             alignItems: 'center',
             justifyContent: 'center',
             flex: 1,
-            backgroundColor: 'orange'
+            backgroundColor: 'steelblue'
           }}
         >
           <ActivityIndicator color='#FFF' size='large' />
