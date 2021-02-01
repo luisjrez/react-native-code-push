@@ -138,7 +138,7 @@ class Application extends Component {
       >
         <Text>Hello from Code Push Example!</Text>
         <Text>{isUpdating ? 'INSTALLING UPDATE' : 'THE APP IS UP TO DATE'}</Text>
-        <Text>{JSON.stringify(`PROGRESS: ${this.state}`, null, 2)}</Text>
+        <Text>{JSON.stringify(this.state, null, 2)}</Text>
       </View>
     )
   }
