@@ -136,9 +136,9 @@ class Application extends Component {
           backgroundColor: 'orange'
         }}
       >
-        <Text>Hello from Code Push Example!</Text>
-        <Text>{isUpdating ? 'INSTALLING UPDATE' : 'THE APP IS UP TO DATE'}</Text>
-        <Text>{JSON.stringify(this.state, null, 2)}</Text>
+        <Text style={{ color: '#FFF', fontWeight: 'bold' }}>Hello from Code Push Example!</Text>
+        <Text style={{ color: '#FFF', fontWeight: 'bold' }}>{isUpdating ? 'INSTALLING UPDATE' : 'THE APP IS UP TO DATE'}</Text>
+        <Text style={{ color: '#FFF', fontWeight: 'bold' }}>{JSON.stringify(this.state, null, 2)}</Text>
       </View>
     )
   }
